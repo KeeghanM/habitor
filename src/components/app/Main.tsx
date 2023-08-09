@@ -5,26 +5,13 @@ import { kinde } from './_auth'
 export default function MainApp() {
   return (
     <div>
-      <Show
-        when={kinde()?.getUser()}
-        fallback={
-          <div class="grid h-screen w-screen place-items-center bg-gray-800 text-white">
-            <div class="flex flex-col items-center justify-center gap-4">
-              <h1 class="text-4xl font-bold">
-                You need to login to use HabitOr
-              </h1>
-              <button
-                onclick={() => kinde().login()}
-                class="rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-gray-700 hover:shadow-lg sm:col-span-2"
-              >
-                Login/Register
-              </button>
-            </div>
-          </div>
-        }
-      >
+      <Show when={kinde()?.getUser()} fallback={kinde()?.login()}>
         <div class="h-screen w-screen">
           <aside class="flex h-screen w-64 flex-col items-center bg-gray-800 py-10 text-gray-200">
+            <p class="mb-4 text-xl">
+              Welcome back,{' '}
+              <span class="italic">{kinde().getUser().given_name}.</span>
+            </p>
             <CreateHabit />
           </aside>
         </div>

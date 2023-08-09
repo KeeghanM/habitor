@@ -1,13 +1,14 @@
 import { createEffect, createSignal } from 'solid-js'
 import { Habit, setHabits } from './_store'
+import { kinde } from './_auth'
 
 export default function CreateHabit() {
-  const [showModal, setShowModal] = createSignal(true)
-  const [habitName, setHabitName] = createSignal('' as string)
-  const [habitType, setHabitType] = createSignal('' as string)
-  const [habitTime, setHabitTime] = createSignal('' as string)
+  const [showModal, setShowModal] = createSignal(false)
+  const [habitName, setHabitName] = createSignal('')
+  const [habitType, setHabitType] = createSignal('')
+  const [habitTime, setHabitTime] = createSignal('')
   const [habitDays, setHabitDays] = createSignal([] as string[])
-  const [isValid, setIsValid] = createSignal(false as boolean)
+  const [isValid, setIsValid] = createSignal(false)
 
   createEffect(() => {
     setIsValid(
@@ -45,7 +46,8 @@ export default function CreateHabit() {
     const response = await fetch('/api/habits', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${kinde()?.getToken()}`
       },
       body: JSON.stringify(habit)
     })
