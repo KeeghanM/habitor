@@ -1,5 +1,6 @@
+import type { Habit } from './_store'
 import { createEffect, createSignal } from 'solid-js'
-import { Habit, setHabits } from './_store'
+import { setHabits } from './_store'
 import { kinde } from './_auth'
 
 export default function CreateHabit() {
@@ -43,23 +44,26 @@ export default function CreateHabit() {
       days: habitDays()
     }
 
+    const token = await kinde().getToken()
     const response = await fetch('/api/habits', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${kinde()?.getToken()}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(habit)
     })
 
     if (response.ok) {
-      const newHabit = (await response.json()) as Habit
-      setHabits((prev) => [...prev, newHabit])
-      setHabitName('')
-      setHabitType('')
-      setHabitTime('')
-      setHabitDays([])
-      setShowModal(false)
+      const data = await response.json()
+      console.log(data)
+      // const newHabit = (await response.json()) as Habit
+      // setHabits((prev) => [...prev, newHabit])
+      // setHabitName('')
+      // setHabitType('')
+      // setHabitTime('')
+      // setHabitDays([])
+      // setShowModal(false)
     } else {
       console.error('Error creating habit')
     }
