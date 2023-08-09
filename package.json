@@ -13,6 +13,7 @@
     "@astrojs/solid-js": "^2.2.0",
     "@astrojs/tailwind": "^4.0.0",
     "@astrojs/vercel": "^3.8.0",
+    "@kinde-oss/kinde-auth-pkce-js": "^3.0.17",
     "@planetscale/database": "^1.10.0",
     "astro": "^2.10.3",
     "prettier": "^3.0.1",
