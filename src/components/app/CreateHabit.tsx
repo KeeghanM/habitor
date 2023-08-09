@@ -2,9 +2,10 @@ import type { Habit } from './_store'
 import { createEffect, createSignal } from 'solid-js'
 import { setHabits } from './_store'
 import { kinde } from './_auth'
+import { doc } from 'prettier'
 
 export default function CreateHabit() {
-  const [showModal, setShowModal] = createSignal(false)
+  const [showModal, setShowModal] = createSignal(true)
   const [habitName, setHabitName] = createSignal('')
   const [habitType, setHabitType] = createSignal('')
   const [habitTime, setHabitTime] = createSignal('')
@@ -20,10 +21,6 @@ export default function CreateHabit() {
         habitDays().length > 0
     )
   })
-
-  const createHabit = () => {
-    setShowModal(true)
-  }
 
   const handleDay = (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -58,29 +55,32 @@ export default function CreateHabit() {
     if (response.ok) {
       const newHabit = (await response.json()).habit as Habit
       setHabits((prev) => [...prev, newHabit])
-      setHabitName('')
-      setHabitType('')
-      setHabitTime('')
-      setHabitDays([])
-      // @ts-ignore
-      e.target.reset()
-      setShowModal(false)
+      closeModal()
     } else {
       console.error('Error creating habit')
     }
   }
 
+  const closeModal = () => {
+    setHabitName('')
+    setHabitType('')
+    setHabitTime('')
+    setHabitDays([])
+    document.getElementById('create-habit-form')?.reset()
+    setShowModal(false)
+  }
+
   return (
     <>
       <button
-        onclick={createHabit}
-        class="rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-gray-700 hover:shadow-lg"
+        onclick={() => setShowModal(true)}
+        class="w-full rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-gray-700 hover:shadow-lg"
       >
         Create Habit
       </button>
 
       <div
-        onclick={() => setShowModal(false)}
+        onclick={closeModal}
         class={
           'left-0 top-0 z-10 h-screen w-screen bg-black opacity-50 ' +
           (showModal() ? 'fixed' : 'hidden')
@@ -92,8 +92,7 @@ export default function CreateHabit() {
           (showModal() ? 'fixed' : 'hidden')
         }
       >
-        <h2 class="text-2xl font-bold text-gray-200">Create a new Habit</h2>
-        <form onsubmit={handleSubmit}>
+        <form id="create-habit-form" onsubmit={handleSubmit}>
           <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
             <div class="sm:col-span-2">
               <label
@@ -276,17 +275,27 @@ export default function CreateHabit() {
                 </label>
               </li>
             </ul>
-            <button
-              disabled={!isValid()}
-              class={
-                'rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase sm:col-span-2' +
-                (isValid()
-                  ? ' bg-blue-800 text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg'
-                  : ' cursor-not-allowed text-gray-400')
-              }
-            >
-              Create
-            </button>
+            <div class="col-span-2 flex gap-4">
+              <button
+                type="submit"
+                disabled={!isValid()}
+                class={
+                  'flex-1 rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase' +
+                  (isValid()
+                    ? ' bg-blue-800 text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg'
+                    : ' cursor-not-allowed text-gray-400')
+                }
+              >
+                Create
+              </button>
+              <button
+                type="button"
+                onclick={closeModal}
+                class="flex w-fit items-center justify-center rounded-lg bg-red-800 px-4 py-2 text-2xl font-bold text-red-300 transition-colors duration-300 hover:bg-red-700 hover:shadow-lg"
+              >
+                X
+              </button>
+            </div>
           </div>
         </form>
       </div>
