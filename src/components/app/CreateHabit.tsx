@@ -1,11 +1,11 @@
-import type { Habit } from './_store'
+import type { HabitType } from './_store'
 import { createEffect, createSignal } from 'solid-js'
 import { setHabits } from './_store'
 import { kinde } from './_auth'
 import { doc } from 'prettier'
 
 export default function CreateHabit() {
-  const [showModal, setShowModal] = createSignal(true)
+  const [showModal, setShowModal] = createSignal(false)
   const [habitName, setHabitName] = createSignal('')
   const [habitType, setHabitType] = createSignal('')
   const [habitTime, setHabitTime] = createSignal('')
@@ -35,7 +35,7 @@ export default function CreateHabit() {
     e.preventDefault()
     if (!isValid()) return
 
-    const habit: Omit<Habit, 'id'> = {
+    const habit: Omit<HabitType, 'id'> = {
       name: habitName(),
       type: habitType(),
       time: habitTime(),
@@ -53,7 +53,7 @@ export default function CreateHabit() {
     })
 
     if (response.ok) {
-      const newHabit = (await response.json()).habit as Habit
+      const newHabit = (await response.json()).habit as HabitType
       setHabits((prev) => [...prev, newHabit])
       closeModal()
     } else {
@@ -66,6 +66,7 @@ export default function CreateHabit() {
     setHabitType('')
     setHabitTime('')
     setHabitDays([])
+    // @ts-ignore
     document.getElementById('create-habit-form')?.reset()
     setShowModal(false)
   }
@@ -133,8 +134,8 @@ export default function CreateHabit() {
               >
                 <option value="">Select time</option>
                 <option value="morning">Morning (pre 12pm)</option>
-                <option value="daily">Mid-Day (12-5pm)</option>
-                <option value="weekly">Evening (after 5pm)</option>
+                <option value="midday">Mid-Day (12-5pm)</option>
+                <option value="evening">Evening (after 5pm)</option>
               </select>
             </div>
             <div>

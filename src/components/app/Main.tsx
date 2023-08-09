@@ -1,6 +1,7 @@
 import { Show } from 'solid-js'
 import CreateHabit from './CreateHabit'
 import { kinde } from './_auth'
+import Habits from './Habits'
 
 export default function MainApp() {
   return (
@@ -14,7 +15,9 @@ export default function MainApp() {
             </p>
             <CreateHabit />
           </aside>
-          <main class="w-full"></main>
+          <main class="w-full">
+            <Habits />
+          </main>
         </div>
       </Show>
     </div>
