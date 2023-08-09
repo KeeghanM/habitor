@@ -13,7 +13,8 @@ export default function CreateHabit() {
 
   createEffect(() => {
     setIsValid(
-      habitName() !== '' &&
+      habitName().length >= 5 &&
+        habitName().length <= 50 &&
         habitType() !== '' &&
         habitTime() !== '' &&
         habitDays().length > 0
@@ -51,19 +52,19 @@ export default function CreateHabit() {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(habit)
+      body: JSON.stringify({ habit })
     })
 
     if (response.ok) {
-      const data = await response.json()
-      console.log(data)
-      // const newHabit = (await response.json()) as Habit
-      // setHabits((prev) => [...prev, newHabit])
-      // setHabitName('')
-      // setHabitType('')
-      // setHabitTime('')
-      // setHabitDays([])
-      // setShowModal(false)
+      const newHabit = (await response.json()).habit as Habit
+      setHabits((prev) => [...prev, newHabit])
+      setHabitName('')
+      setHabitType('')
+      setHabitTime('')
+      setHabitDays([])
+      // @ts-ignore
+      e.target.reset()
+      setShowModal(false)
     } else {
       console.error('Error creating habit')
     }
@@ -275,7 +276,15 @@ export default function CreateHabit() {
                 </label>
               </li>
             </ul>
-            <button class="rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-gray-700 hover:shadow-lg sm:col-span-2">
+            <button
+              disabled={!isValid()}
+              class={
+                'rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase sm:col-span-2' +
+                (isValid()
+                  ? ' bg-blue-800 text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg'
+                  : ' cursor-not-allowed text-gray-400')
+              }
+            >
               Create
             </button>
           </div>

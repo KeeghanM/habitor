@@ -1,9 +1,9 @@
-export default async function IsAuthenticated(
+export default async function GetUserId(
   request: Request
-): Promise<boolean> {
+): Promise<string | null> {
   const access_token = request.headers.get('Authorization')?.split(' ')[1]
   if (!access_token) {
-    return false
+    return null
   }
 
   const headers = {
@@ -18,8 +18,8 @@ export default async function IsAuthenticated(
     }
   )
   if (response.status === 200) {
-    return true
+    return (await response.json()).id
   } else {
-    return false
+    return null
   }
 }
