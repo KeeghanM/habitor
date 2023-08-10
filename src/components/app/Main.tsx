@@ -7,17 +7,15 @@ export default function MainApp() {
   return (
     <div>
       <Show when={kinde()?.getUser()} fallback={kinde()?.login()}>
-        <div class="grid h-screen w-screen grid-cols-[300px_1fr]">
-          <aside class="flex h-screen  w-full flex-col items-center bg-gray-800 px-6 py-10 text-gray-200">
-            <p class="mb-4 text-xl">
-              Welcome back,{' '}
-              <span class="italic">{kinde().getUser().given_name}.</span>
-            </p>
-            <CreateHabit />
-          </aside>
-          <main class="w-full">
-            <Habits />
-          </main>
+        <main class="h-screen w-screen">
+          <Habits />
+        </main>
+        <div class="fixed bottom-0 left-0 right-0 flex h-fit flex-col items-center gap-2 bg-gray-900 px-6 py-6 text-gray-200 shadow-lg ">
+          <p class="mb-4 text-xl">
+            Welcome back,{' '}
+            <span class="italic">{kinde().getUser().given_name}.</span>
+          </p>
+          <CreateHabit />
         </div>
       </Show>
     </div>
