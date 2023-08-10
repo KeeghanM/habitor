@@ -8,5 +8,6 @@ export type HabitType = {
   days: string[]
   completed?: boolean
   streak?: number
+  value?: string
 }
 export const [habits, setHabits] = createSignal<HabitType[]>([])

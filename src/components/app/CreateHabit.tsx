@@ -89,7 +89,7 @@ export default function CreateHabit() {
       ></div>
       <div
         class={
-          'left-0 right-0 z-20 mx-auto flex max-w-xl flex-col rounded-lg bg-gray-800 p-6 text-gray-200 ' +
+          'left-0 right-0 top-20 z-20 mx-auto flex max-w-xl flex-col rounded-lg bg-gray-800 p-6 text-gray-200 ' +
           (showModal() ? 'fixed' : 'hidden')
         }
       >

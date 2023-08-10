@@ -11,7 +11,11 @@ export const post: APIRoute = async ({ params, request }) => {
       })
     }
 
-    const { today, completed }: { today: string; completed: boolean } =
+    const {
+      today,
+      completed,
+      value
+    }: { today: string; completed: boolean; value: string | undefined } =
       await request.json()
     if (!today) {
       return new Response(JSON.stringify({ error: 'Missing Today' }), {
@@ -43,26 +47,20 @@ export const post: APIRoute = async ({ params, request }) => {
     }
 
     const dateString = today.split('T')[0]
-    let response: any
+    // clear out previous completion if it exists
+    const deleteResponse = await DB.execute(
+      `DELETE FROM completions WHERE habit_id = ? AND completion_date = ?`,
+      [habit_id, dateString]
+    )
+
     if (completed) {
-      response = await DB.execute(
-        `INSERT INTO completions (habit_id, completion_date) VALUES (?, ?)`,
-        [habit_id, dateString]
-      )
-    } else {
-      response = await DB.execute(
-        `DELETE FROM completions WHERE habit_id = ? AND completion_date = ?`,
-        [habit_id, dateString]
+      const insertValue = value ? value : null
+      const response = await DB.execute(
+        `INSERT INTO completions (habit_id, completion_date, value) VALUES (?, ?, ?)`,
+        [habit_id, dateString, insertValue]
       )
     }
-    if (!response) {
-      return new Response(
-        JSON.stringify({ error: 'Error updating completion' }),
-        {
-          status: 500
-        }
-      )
-    }
+
     return new Response(JSON.stringify({ success: true }), {
       status: 200
     })

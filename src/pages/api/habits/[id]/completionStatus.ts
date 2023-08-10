@@ -37,6 +37,15 @@ export const post: APIRoute = async ({ params, request }) => {
         ) THEN 1 
         ELSE 0 
     END AS is_completed_today,
+    COALESCE(
+    (
+        SELECT value
+        FROM completions c
+        WHERE c.habit_id = h.id AND c.completion_date = CURDATE()
+        LIMIT 1
+    ), 
+    NULL
+) AS todays_value,
     (
         SELECT COUNT(*)
         FROM (
@@ -54,15 +63,18 @@ WHERE h.id = ?;`,
       [habit_id]
     )
 
-    const { is_completed_today, current_streak } = response.rows[0] as {
+    const { is_completed_today, current_streak, todays_value } = response
+      .rows[0] as {
       is_completed_today: string
       current_streak: string
+      todays_value: string
     }
 
     const completed = is_completed_today === '1'
     const streak = parseInt(current_streak)
+    const value = todays_value ? todays_value : undefined
 
-    return new Response(JSON.stringify({ completed, streak }), {
+    return new Response(JSON.stringify({ completed, streak, value }), {
       status: 200
     })
   } catch (error: any) {

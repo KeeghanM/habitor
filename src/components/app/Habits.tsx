@@ -50,6 +50,7 @@ export default function Habits() {
       const data = await response.json()
       habit.completed = data.completed
       habit.streak = data.streak
+      habit.value = data.value
       setTodaysHabits((prev) => [...prev, habit])
     }
 
