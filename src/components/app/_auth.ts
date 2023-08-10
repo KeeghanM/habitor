@@ -1,4 +1,4 @@
-import createKindeClient from '@kinde-oss/kinde-auth-pkce-js'
+import { createKindeClient } from '@kinde-oss/kinde-auth-pkce-js'
 import { createSignal, onMount } from 'solid-js'
 export const [kinde, setKinde] = createSignal<any>(null)
 
