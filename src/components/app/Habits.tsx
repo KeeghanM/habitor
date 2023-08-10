@@ -98,7 +98,7 @@ export default function Habits() {
               <ul
                 ref={ulRef}
                 class={
-                  'max-h-[30vh] overflow-y-auto rounded-lg bg-gray-600 p-6' +
+                  'flex max-h-[30vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 p-6 ' +
                   (open() ? '' : ' hidden')
                 }
               >

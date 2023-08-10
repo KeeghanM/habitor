@@ -21,7 +21,7 @@ export default function Delete(props: { habit: HabitType }) {
   return (
     <>
       <button
-        class="ml-auto text-red-600 transition-colors duration-300 hover:text-red-700"
+        class="ml-auto h-fit text-red-600 transition-colors duration-300 hover:text-red-700"
         onclick={() => setShowModal(true)}
       >
         <svg

@@ -159,7 +159,6 @@ export default function CreateHabit() {
                 <option value="check">Checkbox (yes/no)</option>
                 <option value="text">Text input</option>
                 <option value="count">Quantity/Counter</option>
-                <option value="time">Time</option>
               </select>
             </div>
             <ul class="col-span-2 grid grid-cols-7 gap-2">

@@ -18,6 +18,11 @@ export default function Habit(props: { habit: HabitType }) {
     setCompleted(countValue > 0)
     handleComplete(countValue.toString())
   }
+  const handleText = async (e: Event) => {
+    const textValue = (e.target as HTMLInputElement).value
+    setCompleted(textValue.length > 0)
+    handleComplete(textValue)
+  }
 
   const handleComplete = async (value: string | undefined) => {
     const streakChange =
@@ -25,7 +30,8 @@ export default function Habit(props: { habit: HabitType }) {
     setHabit((prev) => ({
       ...prev,
       streak: prev.streak! + streakChange,
-      completed: completed()
+      completed: completed(),
+      value: value || prev.value
     }))
 
     const token = await kinde().getToken()
@@ -40,7 +46,7 @@ export default function Habit(props: { habit: HabitType }) {
   }
 
   return (
-    <li class="flex items-center gap-2">
+    <li class="flex gap-2">
       <p class="relative flex h-[45px] w-[45px] items-center justify-center text-center">
         <span
           class={
@@ -76,38 +82,49 @@ export default function Habit(props: { habit: HabitType }) {
           {habit().streak}
         </span>
       </p>
-      <label
-        class={
-          'text-lg font-semibold text-white ' +
-          (habit().type === 'check'
-            ? 'cursor-pointer transition-colors duration-300 hover:text-orange-300'
-            : 'cursor-default') +
-          (habit().completed ? ' text-orange-600' : '')
-        }
-        for={(habit().id || 0).toString()}
-      >
-        {habit().name}
-      </label>
-      {habit().type === 'check' && (
-        <input
-          id={(habit().id || 0).toString()}
-          type="checkbox"
-          checked={completed()}
-          onchange={(e) => handleCheck(e)}
-          class="hidden"
-        />
-      )}
-      {habit().type === 'count' && (
-        <input
-          id={(habit().id || 0).toString()}
-          type="number"
-          value={habit().value}
-          onchange={(e) => handleCount(e)}
-          min={0}
-          max={1000}
-          class="block w-12  rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
-        />
-      )}
+      <div class="flex flex-col gap-2">
+        <label
+          class={
+            'text-lg font-semibold text-white ' +
+            (habit().type === 'check'
+              ? 'cursor-pointer transition-colors duration-300 hover:text-orange-300'
+              : 'cursor-default') +
+            (habit().completed ? ' text-orange-600' : '')
+          }
+          for={(habit().id || 0).toString()}
+        >
+          {habit().name}
+        </label>
+        {habit().type === 'check' && (
+          <input
+            id={(habit().id || 0).toString()}
+            type="checkbox"
+            checked={completed()}
+            onchange={(e) => handleCheck(e)}
+            class="hidden"
+          />
+        )}
+        {habit().type === 'count' && (
+          <input
+            id={(habit().id || 0).toString()}
+            type="number"
+            value={habit().value}
+            onchange={(e) => handleCount(e)}
+            min={0}
+            max={1000}
+            class="block w-12  rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+          />
+        )}
+        {habit().type === 'text' && (
+          <textarea
+            id={(habit().id || 0).toString()}
+            rows={4}
+            value={habit().value ? habit().value : ''}
+            onchange={(e) => handleText(e)}
+            class="block rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+          />
+        )}
+      </div>
 
       <Delete habit={habit()} />
     </li>
