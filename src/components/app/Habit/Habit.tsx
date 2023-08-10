@@ -51,7 +51,11 @@ export default function Habit(props: { habit: HabitType }) {
         <span
           class={
             'absolute inset-0 ' +
-            (habit().completed ? 'text-orange-600' : 'text-gray-500')
+            (habit().completed
+              ? habit().streak! >= fireMin
+                ? 'text-orange-600'
+                : 'text-lime-500'
+              : 'text-gray-500')
           }
         >
           <svg
@@ -85,11 +89,11 @@ export default function Habit(props: { habit: HabitType }) {
       <div class="flex flex-col gap-2">
         <label
           class={
-            'text-lg font-semibold text-white ' +
+            'text-lg font-semibold ' +
             (habit().type === 'check'
-              ? 'cursor-pointer transition-colors duration-300 hover:text-orange-300'
+              ? 'cursor-pointer transition-colors duration-300 hover:text-lime-300'
               : 'cursor-default') +
-            (habit().completed ? ' text-orange-600' : '')
+            (habit().completed ? ' text-lime-500' : ' text-white')
           }
           for={(habit().id || 0).toString()}
         >

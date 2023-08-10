@@ -15,7 +15,15 @@ export default function MainApp() {
             Welcome back,{' '}
             <span class="italic">{kinde().getUser().given_name}.</span>
           </p>
-          <CreateHabit />
+          <div class="flex gap-4">
+            <CreateHabit />
+            <button
+              onclick={() => kinde().logout()}
+              class="w-fit rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-red-500 transition-colors duration-300 hover:bg-gray-700 hover:shadow-lg"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
       </Show>
     </div>

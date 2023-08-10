@@ -75,7 +75,7 @@ export default function CreateHabit() {
     <>
       <button
         onclick={() => setShowModal(true)}
-        class="w-fit rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-gray-700 hover:shadow-lg"
+        class="w-fit rounded-lg bg-blue-800 px-4 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg"
       >
         Create Habit
       </button>
