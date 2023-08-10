@@ -11,7 +11,7 @@ Habitor is a habit tracking web application built using [Astro](https://astro.bu
 
 ## Deployment
 
-The application is deployed on Vercel and can be accessed at [https://habitor.vercel.app](https://habitor.vercel.app).
+The application is deployed on Vercel and can be accessed at [https://habit0r.vercel.app](https://habit0r.vercel.app).
 
 ## License
 
