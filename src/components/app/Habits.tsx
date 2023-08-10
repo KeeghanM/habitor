@@ -23,7 +23,6 @@ export default function Habits() {
   const getTodaysHabits = async (habitsList: HabitType[]) => {
     const token = await kinde().getToken()
     setLoading(true)
-    console.log('Getting habits')
 
     if (habitsList.length == 0) {
       const response = await fetch('/api/habits', {
@@ -33,7 +32,6 @@ export default function Habits() {
         }
       })
       const responseHabits = (await response.json()).habits as HabitType[]
-      console.log(responseHabits)
       if (!responseHabits || responseHabits?.length == 0) {
         setLoading(false)
         return
@@ -91,31 +89,66 @@ export default function Habits() {
         >
           {times.map((time) => {
             let ulRef: HTMLUListElement | undefined
+            const [taskCount, setTaskCount] = createSignal(0)
+            const [completedCount, setCompletedCount] = createSignal(0)
             const [open, setOpen] = createSignal(timeOfDayString === time.value)
             return (
               <div class="px-12 py-6">
-                <h2 class="mb-2 flex items-center gap-4 text-3xl font-bold uppercase">
+                <h2
+                  onclick={() => {
+                    ulRef?.classList.toggle('hidden')
+                    setOpen(!open())
+                  }}
+                  class={
+                    'group mb-2 flex w-fit cursor-pointer items-center gap-4 text-3xl font-bold uppercase transition-colors duration-150  hover:text-blue-500' +
+                    (taskCount() == completedCount()
+                      ? ' text-lime-500'
+                      : ' text-white')
+                  }
+                >
+                  <span class="font-bold text-blue-300 transition-colors duration-150 group-hover:text-blue-500">
+                    {!open() ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path fill="currentColor" d="M19 12.998H5v-2h14z" />
+                      </svg>
+                    )}
+                  </span>
                   {time.label}
-                  <span
-                    class="cursor-pointer font-bold text-blue-300 transition-colors duration-300 hover:text-blue-500 "
-                    onclick={() => {
-                      ulRef?.classList.toggle('hidden')
-                      setOpen(!open())
-                    }}
-                  >
-                    {!open() ? '+' : '-'}
+                  <span>
+                    ({completedCount()}/{taskCount()})
                   </span>
                 </h2>
                 <ul
                   ref={ulRef}
                   class={
-                    'flex max-h-[30vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 p-6 ' +
+                    'mt-2 flex max-h-[30vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 p-6 shadow-lg ' +
                     (open() ? '' : ' hidden')
                   }
                 >
                   {todaysHabits().map((habit) => {
-                    if (habit.time === time.value)
+                    if (habit.time === time.value) {
+                      setTaskCount((prev) => prev + 1)
+                      if (habit.completed) setCompletedCount((prev) => prev + 1)
+
                       return <Habit habit={habit} />
+                    }
                   })}
                 </ul>
               </div>
