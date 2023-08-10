@@ -1,8 +1,7 @@
 import type { HabitType } from './_store'
 import { createEffect, createSignal } from 'solid-js'
-import { setHabits } from './_store'
+import { habits, setHabits } from './_store'
 import { kinde } from './_auth'
-import { doc } from 'prettier'
 
 export default function CreateHabit() {
   const [showModal, setShowModal] = createSignal(false)
@@ -75,7 +74,12 @@ export default function CreateHabit() {
     <>
       <button
         onclick={() => setShowModal(true)}
-        class="w-fit rounded-lg bg-blue-800 px-4 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg"
+        class={
+          'w-fit rounded-lg bg-blue-800 px-4 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg' +
+          (habits().length == 0 && showModal() == false
+            ? ' animate-bounce'
+            : '')
+        }
       >
         Create Habit
       </button>
@@ -89,7 +93,7 @@ export default function CreateHabit() {
       ></div>
       <div
         class={
-          'left-0 right-0 top-20 z-20 mx-auto flex max-w-xl flex-col rounded-lg bg-gray-800 p-6 text-gray-200 ' +
+          'left-0 right-0 top-20 z-20 mx-auto flex max-w-xl flex-col rounded-lg bg-gray-800 p-6 text-gray-200 shadow-lg ' +
           (showModal() ? 'fixed' : 'hidden')
         }
       >

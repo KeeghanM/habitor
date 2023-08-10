@@ -23,6 +23,7 @@ export default function Habits() {
   const getTodaysHabits = async (habitsList: HabitType[]) => {
     const token = await kinde().getToken()
     setLoading(true)
+    console.log('Getting habits')
 
     if (habitsList.length == 0) {
       const response = await fetch('/api/habits', {
@@ -31,7 +32,12 @@ export default function Habits() {
           Authorization: `Bearer ${token}`
         }
       })
-      const responseHabits = (await response.json()).habits
+      const responseHabits = (await response.json()).habits as HabitType[]
+      console.log(responseHabits)
+      if (!responseHabits || responseHabits?.length == 0) {
+        setLoading(false)
+        return
+      }
       setHabits(responseHabits)
     }
 
@@ -66,37 +72,56 @@ export default function Habits() {
           </div>
         }
       >
-        {times.map((time) => {
-          let ulRef: HTMLUListElement | undefined
-          const [open, setOpen] = createSignal(timeOfDayString === time.value)
-          return (
-            <div class="px-12 py-6">
-              <h2 class="mb-2 flex items-center gap-4 text-3xl font-bold uppercase">
-                {time.label}
-                <span
-                  class="cursor-pointer font-bold text-blue-300 transition-colors duration-300 hover:text-blue-500 "
-                  onclick={() => {
-                    ulRef?.classList.toggle('hidden')
-                    setOpen(!open())
-                  }}
+        <Show
+          when={todaysHabits().length > 0}
+          fallback={
+            <Show
+              when={habits().length > 0}
+              fallback={
+                <div class="flex h-full w-full items-center justify-center">
+                  <p class="text-2xl">Create your first habit below...</p>
+                </div>
+              }
+            >
+              <div class="flex h-full w-full items-center justify-center">
+                <p class="text-2xl">No habits for today!</p>
+              </div>
+            </Show>
+          }
+        >
+          {times.map((time) => {
+            let ulRef: HTMLUListElement | undefined
+            const [open, setOpen] = createSignal(timeOfDayString === time.value)
+            return (
+              <div class="px-12 py-6">
+                <h2 class="mb-2 flex items-center gap-4 text-3xl font-bold uppercase">
+                  {time.label}
+                  <span
+                    class="cursor-pointer font-bold text-blue-300 transition-colors duration-300 hover:text-blue-500 "
+                    onclick={() => {
+                      ulRef?.classList.toggle('hidden')
+                      setOpen(!open())
+                    }}
+                  >
+                    {!open() ? '+' : '-'}
+                  </span>
+                </h2>
+                <ul
+                  ref={ulRef}
+                  class={
+                    'flex max-h-[30vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 p-6 ' +
+                    (open() ? '' : ' hidden')
+                  }
                 >
-                  {!open() ? '+' : '-'}
-                </span>
-              </h2>
-              <ul
-                ref={ulRef}
-                class={
-                  'flex max-h-[30vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 p-6 ' +
-                  (open() ? '' : ' hidden')
-                }
-              >
-                {todaysHabits().map((habit) => {
-                  if (habit.time === time.value) return <Habit habit={habit} />
-                })}
-              </ul>
-            </div>
-          )
-        })}
+                  {todaysHabits().map((habit) => {
+                    if (habit.time === time.value)
+                      return <Habit habit={habit} />
+                  })}
+                </ul>
+              </div>
+            )
+          })}
+        </Show>
       </Show>
     </div>
   )
