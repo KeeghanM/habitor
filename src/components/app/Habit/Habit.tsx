@@ -1,9 +1,12 @@
-import { createSignal } from 'solid-js'
+import { Setter, createSignal } from 'solid-js'
 import { kinde } from '../_auth'
 import type { HabitType } from '../_store'
 import Delete from './Delete'
 
-export default function Habit(props: { habit: HabitType }) {
+export default function Habit(props: {
+  habit: HabitType
+  updateCompleted: Setter<number>
+}) {
   const [habit, setHabit] = createSignal(props.habit)
   const [completed, setCompleted] = createSignal(habit().completed as boolean)
 
@@ -33,6 +36,7 @@ export default function Habit(props: { habit: HabitType }) {
       completed: completed(),
       value: value || prev.value
     }))
+    props.updateCompleted((prev) => prev + streakChange)
 
     const token = await kinde().getToken()
     const response = await fetch(`/api/habits/${habit().id}/updateCompletion`, {

@@ -147,7 +147,12 @@ export default function Habits() {
                       setTaskCount((prev) => prev + 1)
                       if (habit.completed) setCompletedCount((prev) => prev + 1)
 
-                      return <Habit habit={habit} />
+                      return (
+                        <Habit
+                          habit={habit}
+                          updateCompleted={setCompletedCount}
+                        />
+                      )
                     }
                   })}
                 </ul>
