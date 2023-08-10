@@ -62,12 +62,6 @@ WHERE h.id = ?;`,
     const completed = is_completed_today === '1'
     const streak = parseInt(current_streak)
 
-    console.log({
-      habit_id,
-      is_completed_today,
-      current_streak
-    })
-
     return new Response(JSON.stringify({ completed, streak }), {
       status: 200
     })
