@@ -61,39 +61,39 @@ export default function Habits() {
   ]
 
   return (
-    <div class="h-screen w-full bg-gray-700 text-xl text-white">
+    <Show
+      when={!loading()}
+      fallback={
+        <div class="fixed bottom-0 flex h-full w-screen items-center justify-center">
+          <div class="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
+        </div>
+      }
+    >
       <Show
-        when={!loading()}
+        when={todaysHabits().length > 0}
         fallback={
-          <div class="flex h-full w-full items-center justify-center">
-            <div class="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
-          </div>
+          <Show
+            when={habits().length > 0}
+            fallback={
+              <div class="fixed bottom-0 flex h-full w-screen items-center justify-center">
+                <p class="text-2xl text-white">Create your first habit...</p>
+              </div>
+            }
+          >
+            <div class="fixed bottom-0 flex h-full w-screen items-center justify-center">
+              <p class="text-2xl text-white">No habits for today!</p>
+            </div>
+          </Show>
         }
       >
-        <Show
-          when={todaysHabits().length > 0}
-          fallback={
-            <Show
-              when={habits().length > 0}
-              fallback={
-                <div class="flex h-full w-full items-center justify-center">
-                  <p class="text-2xl">Create your first habit below...</p>
-                </div>
-              }
-            >
-              <div class="flex h-full w-full items-center justify-center">
-                <p class="text-2xl">No habits for today!</p>
-              </div>
-            </Show>
-          }
-        >
+        <div class="mx-auto max-w-screen-md px-6 text-xl text-white ">
           {times.map((time) => {
             let ulRef: HTMLUListElement | undefined
             const [taskCount, setTaskCount] = createSignal(0)
             const [completedCount, setCompletedCount] = createSignal(0)
             const [open, setOpen] = createSignal(timeOfDayString === time.value)
             return (
-              <div class="px-12 py-6">
+              <div class="py-6">
                 <h2
                   onclick={() => {
                     ulRef?.classList.toggle('hidden')
@@ -138,7 +138,7 @@ export default function Habits() {
                 <ul
                   ref={ulRef}
                   class={
-                    'mt-2 flex max-h-[30vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 p-6 shadow-lg ' +
+                    'mt-2 flex max-h-[50vh] flex-col gap-4 overflow-y-auto rounded-lg bg-gray-600 px-4 py-6 shadow-lg ' +
                     (open() ? '' : ' hidden')
                   }
                 >
@@ -154,8 +154,8 @@ export default function Habits() {
               </div>
             )
           })}
-        </Show>
+        </div>
       </Show>
-    </div>
+    </Show>
   )
 }

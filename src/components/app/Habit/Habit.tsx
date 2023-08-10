@@ -46,7 +46,7 @@ export default function Habit(props: { habit: HabitType }) {
   }
 
   return (
-    <li class="flex gap-2">
+    <li class="flex gap-2 border-b border-gray-700 pb-2">
       <p class="relative flex h-[45px] w-[45px] items-center justify-center text-center">
         <span
           class={
