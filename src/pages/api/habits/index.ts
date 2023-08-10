@@ -75,7 +75,28 @@ export const get: APIRoute = async ({ params, request }) => {
     }
 
     const response = await DB.execute(
-      `SELECT id, name, type, time, monday, tuesday, wednesday, thursday, friday, saturday, sunday FROM habits WHERE user = ?`,
+      `SELECT 
+    h.id, h.name, h.type, h.time, h.monday, h.tuesday, h.wednesday, h.thursday, h.friday, h.saturday, h.sunday,
+    CASE 
+        WHEN c.completion_date IS NOT NULL THEN 1 
+        ELSE 0 
+    END AS is_completed_today,
+    c.value,
+    (
+        SELECT COUNT(*)
+        FROM (
+            SELECT hd.date, 
+                   CASE WHEN c1.completion_date IS NULL THEN 0 ELSE 1 END AS completed
+            FROM habit_dates hd
+            LEFT JOIN completions c1 ON hd.habit_id = c1.habit_id AND hd.date = c1.completion_date
+            WHERE hd.habit_id = h.id
+            ORDER BY hd.date DESC
+        ) AS sub
+        WHERE sub.completed = 1 AND sub.date <= CURDATE()
+    ) AS current_streak
+FROM habits h
+LEFT JOIN completions c ON h.id = c.habit_id AND c.completion_date = CURDATE()
+WHERE h.user = ? AND h.active = 1`,
       [user_id]
     )
     const habits: HabitType[] = response.rows.map((row: any) => {
@@ -88,13 +109,18 @@ export const get: APIRoute = async ({ params, request }) => {
       if (row.saturday) daysArray.push('saturday')
       if (row.sunday) daysArray.push('sunday')
 
-      return {
+      const habit = {
         id: row.id,
         name: row.name,
         type: row.type,
         time: row.time,
-        days: daysArray
+        days: daysArray,
+        completed: row.is_completed_today === '1',
+        streak: parseInt(row.current_streak),
+        value: row.value
       }
+
+      return habit
     })
 
     return new Response(JSON.stringify({ habits }), {

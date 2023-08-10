@@ -18,7 +18,7 @@ export const del: APIRoute = async ({ params, request }) => {
       })
     }
 
-    await DB.execute(`DELETE FROM habits WHERE id = ? AND user = ?`, [
+    await DB.execute(`UPDATE habits SET active = 0 WHERE id = ? AND user = ?`, [
       habitId,
       user_id
     ])

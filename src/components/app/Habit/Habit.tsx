@@ -112,7 +112,7 @@ export default function Habit(props: { habit: HabitType }) {
             onchange={(e) => handleCount(e)}
             min={0}
             max={1000}
-            class="block w-12  rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+            class="block w-24  rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
           />
         )}
         {habit().type === 'text' && (

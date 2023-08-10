@@ -35,26 +35,14 @@ export default function Habits() {
       setHabits(responseHabits)
     }
 
+    // Add habits to the list if they are due today
     for (const habit of habitsList) {
       if (!habit.days.includes(todayString.toLowerCase())) continue
       if (todaysHabits().find((h) => h.id === habit.id)) continue
 
-      const response = await fetch(`/api/habits/${habit.id}/completionStatus`, {
-        method: 'POST',
-        headers: {
-          contentType: 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ today })
-      })
-      const data = await response.json()
-      habit.completed = data.completed
-      habit.streak = data.streak
-      habit.value = data.value
       setTodaysHabits((prev) => [...prev, habit])
     }
-
-    // Remove habits that are no longer in the main list
+    // Remove habits that are no longer in the main list (i.e deleted)
     setTodaysHabits((prev) =>
       prev.filter((habit) => habitsList.find((h) => h.id === habit.id))
     )
