@@ -1,6 +1,7 @@
+import type { APIRoute } from 'astro'
 import { DB } from './_database'
 
-export default async function handler() {
+export const get: APIRoute = async ({ params, request }) => {
   try {
     const response = await DB.execute(
       `SELECT id,monday, tuesday, wednesday, thursday, friday, saturday, sunday FROM habits WHERE active = true`
@@ -45,7 +46,14 @@ export default async function handler() {
         }
       }
     }
+
+    return new Response(JSON.stringify({ message: 'success' }), {
+      status: 200
+    })
   } catch (error) {
     console.error(error)
+    return new Response(JSON.stringify({ error }), {
+      status: 500
+    })
   }
 }
