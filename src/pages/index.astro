@@ -7,16 +7,23 @@ import Layout from '../layouts/Layout.astro'
   description="HabitOr is a habit tracking app that helps you build good habits and break bad ones."
 >
   <div
-    class="max-w-screen-lg mx-auto px-6 text-center h-screen flex flex-col justify-center"
+    class="max-w-screen-lg mx-auto px-6 text-center h-screen flex flex-col justify-center gap-6"
   >
     <h1 class="text-2xl lg:text-4xl font-bold">Welcome to HabitOr</h1>
-    <p>
-      HabitOr is a habit tracking app that helps you build good habits and break
-      bad ones.
-    </p>
-    <p>
-      It's a work in progress, but you can <a href="/signup">sign up</a> and
-      start tracking your habits today!
-    </p>
+    <div>
+      <p>
+        HabitOr is a habit tracking app that helps you build good habits and
+        break bad ones.
+      </p>
+      <p>
+        It's a work in progress, but you can <a href="/signup">sign up</a> and
+        start tracking your habits today!
+      </p>
+    </div>
+    <a
+      href="/app"
+      class="w-fit mx-auto rounded-lg bg-gray-600 px-6 py-2 font-bold uppercase text-blue-300 transition-colors duration-300 hover:bg-blue-700 hover:shadow-lg"
+      >Sign up</a
+    >
   </div>
 </Layout>
