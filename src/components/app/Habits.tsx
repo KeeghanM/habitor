@@ -39,8 +39,9 @@ export default function Habits() {
         },
         body: JSON.stringify({ today })
       })
-      const completed = (await response.json()).completed
-      habit.completed = completed
+      const data = await response.json()
+      habit.completed = data.completed
+      habit.streak = data.streak
       setTodaysHabits((prev) => [...prev, habit])
     }
   })
