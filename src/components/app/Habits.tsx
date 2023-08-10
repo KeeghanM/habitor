@@ -20,6 +20,13 @@ export default function Habits() {
     getTodaysHabits(habits())
   })
 
+  setInterval(
+    () => {
+      getTodaysHabits(habits())
+    },
+    1000 * 60 * 60
+  )
+
   const getTodaysHabits = async (habitsList: HabitType[]) => {
     const token = await kinde().getToken()
     setLoading(true)
