@@ -2,7 +2,7 @@ import type { HabitType } from './_store'
 import { Show, createEffect, createSignal, onMount } from 'solid-js'
 import { kinde } from './_auth'
 import { habits, setHabits } from './_store'
-import Habit from './Habit'
+import Habit from './Habit/Habit'
 
 export default function Habits() {
   const [todaysHabits, setTodaysHabits] = createSignal<HabitType[]>([])
@@ -52,6 +52,12 @@ export default function Habits() {
       habit.streak = data.streak
       setTodaysHabits((prev) => [...prev, habit])
     }
+
+    // Remove habits that are no longer in the main list
+    setTodaysHabits((prev) =>
+      prev.filter((habit) => habitsList.find((h) => h.id === habit.id))
+    )
+
     setLoading(false)
   }
 

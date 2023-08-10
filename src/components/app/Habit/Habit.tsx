@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js'
-import { kinde } from './_auth'
-import type { HabitType } from './_store'
+import { kinde } from '../_auth'
+import type { HabitType } from '../_store'
+import Delete from './Delete'
 
 export default function Habit(props: { habit: HabitType }) {
   const [habit, setHabit] = createSignal(props.habit)
@@ -56,6 +57,7 @@ export default function Habit(props: { habit: HabitType }) {
         onchange={(e) => handleComplete(e)}
       />
       <p>{habit().name}</p>
+      <Delete habit={habit()} />
     </li>
   )
 }
