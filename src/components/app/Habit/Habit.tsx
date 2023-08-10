@@ -90,7 +90,7 @@ export default function Habit(props: {
           {habit().streak}
         </span>
       </p>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-1 flex-col gap-2">
         <label
           class={
             'text-lg font-semibold ' +
@@ -129,7 +129,7 @@ export default function Habit(props: {
             rows={4}
             value={habit().value ? habit().value : ''}
             onchange={(e) => handleText(e)}
-            class="block rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
           />
         )}
       </div>
