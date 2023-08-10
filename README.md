@@ -1,54 +1,26 @@
-# Astro Starter Kit: Basics
+# Habitor
 
-```
-npm create astro@latest -- --template basics
-```
+Habitor is a habit tracking web application built using [Astro](https://astro.build/), [SolidJS](https://solidjs.com/), and [Planetscale](https://planetscale.com/), all using TypeScript. I use [Kinde](https://kinde.com) for authentication.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## Features
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- **Habit Types** You can select a simple checkbox(yes/no) habit, or one that takes text or number inputs
+- **Time-based Habits** Habits are categorized into different times of the day - Morning, Mid-Day, and Evening.
+- **Specific Days** Pick which days of the week you want the habit on
+- **Streak Tracking** Keep track of your current streak, even if the habit isn't scheduled every day
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+## Deployment
 
-## 🚀 Project Structure
+The application is deployed on Vercel and can be accessed at [https://habitor.vercel.app](https://habitor.vercel.app).
 
-Inside of your Astro project, you'll see the following folders and files:
+## License
 
-```
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Habitor is open-source and is licensed under the MIT License. Feel free to contribute, raise issues, and use it as per your needs.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Contributing
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Contributions are welcome! Please ensure that you test your changes thoroughly before submitting a pull request.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Feedback
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:3000`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+If you have any feedback or suggestions, please open an issue on GitHub. We appreciate your input and will do our best to incorporate valuable suggestions.
