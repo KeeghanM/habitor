@@ -1,13 +1,15 @@
 import type { HabitType } from './_store'
-import { Show, createEffect, createSignal, onMount } from 'solid-js'
+import { Show, createSignal, onMount } from 'solid-js'
 import { kinde } from './_auth'
-import { habits, setHabits } from './_store'
+import { habits, lastRefresh, setHabits } from './_store'
 import Habit from './Habit/Habit'
 
 export default function Habits() {
   const [todaysHabits, setTodaysHabits] = createSignal<HabitType[]>([])
   const [loading, setLoading] = createSignal(true)
+  const oneHour = 1000 * 60 * 60
 
+  // Get the time of day and day of week
   const today = new Date()
   const todayString = today.toLocaleDateString('en-GB', { weekday: 'long' })
   const timeOfDay = parseInt(
@@ -15,23 +17,32 @@ export default function Habits() {
   )
   const timeOfDayString =
     timeOfDay < 12 ? 'morning' : timeOfDay < 17 ? 'midday' : 'evening'
+  const times = [
+    { label: 'Morning', value: 'morning' },
+    { label: 'Mid-Day', value: 'midday' },
+    { label: 'Evening', value: 'evening' }
+  ]
 
-  createEffect(async () => {
-    getTodaysHabits(habits())
-  })
-
-  setInterval(
-    () => {
-      getTodaysHabits(habits())
-    },
-    1000 * 60 * 60
-  )
-
-  const getTodaysHabits = async (habitsList: HabitType[]) => {
-    const token = await kinde().getToken()
+  const updateHabitsList = async () => {
     setLoading(true)
+    await refreshHabitsList()
+    await extractTodaysHabits()
+    setLoading(false)
+  }
 
-    if (habitsList.length == 0) {
+  // Refresh habits list on mount and every hour
+  onMount(updateHabitsList)
+  setInterval(() => {
+    updateHabitsList()
+  }, oneHour)
+
+  const refreshHabitsList = async () => {
+    // Check if the habits list is empty or if it's been more than 24 hours since the last refresh
+    if (
+      habits().length == 0 ||
+      lastRefresh().getTime() < Date.now() - oneHour * 24
+    ) {
+      const token = await kinde().getToken()
       const response = await fetch('/api/habits', {
         method: 'GET',
         headers: {
@@ -45,27 +56,24 @@ export default function Habits() {
       }
       setHabits(responseHabits)
     }
+  }
+
+  const extractTodaysHabits = async () => {
+    setTodaysHabits([])
 
     // Add habits to the list if they are due today
-    for (const habit of habitsList) {
+    for (const habit of habits()) {
       if (!habit.days.includes(todayString.toLowerCase())) continue
       if (todaysHabits().find((h) => h.id === habit.id)) continue
 
       setTodaysHabits((prev) => [...prev, habit])
     }
+
     // Remove habits that are no longer in the main list (i.e deleted)
     setTodaysHabits((prev) =>
-      prev.filter((habit) => habitsList.find((h) => h.id === habit.id))
+      prev.filter((habit) => habits().find((h) => h.id === habit.id))
     )
-
-    setLoading(false)
   }
-
-  const times = [
-    { label: 'Morning', value: 'morning' },
-    { label: 'Mid-Day', value: 'midday' },
-    { label: 'Evening', value: 'evening' }
-  ]
 
   return (
     <Show

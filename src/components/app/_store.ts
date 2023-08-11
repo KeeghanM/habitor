@@ -11,3 +11,5 @@ export type HabitType = {
   value?: string
 }
 export const [habits, setHabits] = createSignal<HabitType[]>([])
+
+export const [lastRefresh, setLastRefresh] = createSignal<Date>(new Date())

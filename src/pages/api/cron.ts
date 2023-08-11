@@ -23,7 +23,10 @@ export const get: APIRoute = async ({ params, request }) => {
     })
 
     for (const habit of habits) {
+      // When we create a habit, we already make 7 days worth of habits in the database
+      // So if we check for the next day's date every midnight, we will always have 7 days worth of habits
       const currentDate = new Date()
+      currentDate.setDate(currentDate.getDate() + 1)
       const dayName = currentDate
         .toLocaleString('en-GB', { weekday: 'long' })
         .toLowerCase()
@@ -41,6 +44,10 @@ export const get: APIRoute = async ({ params, request }) => {
               [habit.id, currentDate.toISOString().split('T')[0]]
             )
           }
+          console.log(
+            'Added habit for',
+            currentDate.toISOString().split('T')[0]
+          )
         } catch (error) {
           console.error(error)
         }
