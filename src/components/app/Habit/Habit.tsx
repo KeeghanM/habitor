@@ -1,6 +1,6 @@
 import { Setter, createSignal } from 'solid-js'
 import { kinde } from '../_auth'
-import type { HabitType } from '../_store'
+import { setHabits, type HabitType } from '../_store'
 import Delete from './Delete'
 
 export default function Habit(props: {
@@ -14,7 +14,7 @@ export default function Habit(props: {
 
   const handleCheck = async (e: Event) => {
     setCompleted((e.target as HTMLInputElement).checked)
-    handleComplete(undefined)
+    handleComplete('')
   }
   const handleCount = async (e: Event) => {
     const countValue = (e.target as HTMLInputElement).valueAsNumber
@@ -27,16 +27,17 @@ export default function Habit(props: {
     handleComplete(textValue)
   }
 
-  const handleComplete = async (value: string | undefined) => {
+  const handleComplete = async (value: string) => {
     const streakChange =
       completed() != habit().completed ? (completed() ? 1 : -1) : 0
     setHabit((prev) => ({
       ...prev,
       streak: prev.streak! + streakChange,
       completed: completed(),
-      value: value || prev.value
+      value: value
     }))
     props.updateCompleted((prev) => prev + streakChange)
+    setHabits((prev) => prev.map((h) => (h.id == habit().id ? habit() : h)))
 
     const token = await kinde().getToken()
     const response = await fetch(`/api/habits/${habit().id}/updateCompletion`, {
@@ -83,7 +84,7 @@ export default function Habit(props: {
         </span>
         <span
           class={
-            'z-20 font-bold leading-none text-white' +
+            'z-10 font-bold leading-none text-white' +
             (habit().streak! >= fireMin ? ' pt-3' : '')
           }
         >

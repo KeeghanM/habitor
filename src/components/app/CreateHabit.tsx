@@ -87,13 +87,13 @@ export default function CreateHabit() {
       <div
         onclick={closeModal}
         class={
-          'left-0 top-0 z-10 h-screen w-screen bg-black opacity-50 ' +
+          'left-0 top-0 z-40 h-screen w-screen bg-black opacity-50 ' +
           (showModal() ? 'fixed' : 'hidden')
         }
       ></div>
       <div
         class={
-          'left-0 right-0 top-20 z-20 mx-auto flex max-w-xl flex-col rounded-lg bg-gray-800 p-6 text-gray-200 shadow-lg ' +
+          'left-0 right-0 top-20 z-50 mx-auto flex max-w-xl flex-col rounded-lg bg-gray-800 p-6 text-gray-200 shadow-lg ' +
           (showModal() ? 'fixed' : 'hidden')
         }
       >

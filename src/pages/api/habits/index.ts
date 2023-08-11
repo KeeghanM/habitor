@@ -52,7 +52,7 @@ export const post: APIRoute = async ({ params, request }) => {
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    const newHabit = { id: habitId, ...habit }
+    const newHabit = { id: habitId, ...habit, streak: 0 }
 
     return new Response(JSON.stringify({ habit: newHabit }), {
       status: 200

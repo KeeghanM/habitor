@@ -1,7 +1,7 @@
 import type { HabitType } from './_store'
-import { Show, createSignal, onMount } from 'solid-js'
+import { Show, createEffect, createSignal, onMount } from 'solid-js'
 import { kinde } from './_auth'
-import { habits, lastRefresh, setHabits } from './_store'
+import { habits, lastRefresh, setHabits, setLastRefresh } from './_store'
 import Habit from './Habit/Habit'
 
 export default function Habits() {
@@ -30,8 +30,11 @@ export default function Habits() {
     setLoading(false)
   }
 
-  // Refresh habits list on mount and every hour
-  onMount(updateHabitsList)
+  // Whenever the habits list is updated, refresh the list of habits
+  // also, do the same every hour
+  createEffect(() => {
+    updateHabitsList()
+  })
   setInterval(() => {
     updateHabitsList()
   }, oneHour)
@@ -55,10 +58,12 @@ export default function Habits() {
         return
       }
       setHabits(responseHabits)
+      setLastRefresh(new Date())
     }
   }
 
   const extractTodaysHabits = async () => {
+    console.log("extracting today's habits")
     setTodaysHabits([])
 
     // Add habits to the list if they are due today
