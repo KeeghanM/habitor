@@ -17,7 +17,7 @@ export default function Habit(props: {
     handleComplete('')
   }
   const handleCount = async (e: Event) => {
-    const countValue = (e.target as HTMLInputElement).valueAsNumber
+    const countValue = (e.target as HTMLInputElement).valueAsNumber || 0
     setCompleted(countValue > 0)
     handleComplete(countValue.toString())
   }

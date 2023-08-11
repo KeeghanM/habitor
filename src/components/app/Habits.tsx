@@ -1,22 +1,25 @@
 import type { HabitType } from './_store'
 import { Show, createEffect, createSignal, onMount } from 'solid-js'
 import { kinde } from './_auth'
-import { habits, lastRefresh, setHabits, setLastRefresh } from './_store'
+import {
+  habits,
+  lastRefresh,
+  openTimes,
+  setHabits,
+  setLastRefresh,
+  setOpenTimes
+} from './_store'
 import Habit from './Habit/Habit'
 
 export default function Habits() {
   const [todaysHabits, setTodaysHabits] = createSignal<HabitType[]>([])
   const [loading, setLoading] = createSignal(true)
   const oneHour = 1000 * 60 * 60
+  let today: Date,
+    todayString: string,
+    timeOfDay: number,
+    timeOfDayString: string
 
-  // Get the time of day and day of week
-  const today = new Date()
-  const todayString = today.toLocaleDateString('en-GB', { weekday: 'long' })
-  const timeOfDay = parseInt(
-    today.toLocaleTimeString('en-GB', { hour: '2-digit' })
-  )
-  const timeOfDayString =
-    timeOfDay < 12 ? 'morning' : timeOfDay < 17 ? 'midday' : 'evening'
   const times = [
     { label: 'Morning', value: 'morning' },
     { label: 'Mid-Day', value: 'midday' },
@@ -30,6 +33,21 @@ export default function Habits() {
     setLoading(false)
   }
 
+  // Get all the time values/strings we need
+  const updateTime = () => {
+    today = new Date()
+    todayString = today.toLocaleDateString('en-GB', { weekday: 'long' })
+    timeOfDay = parseInt(today.toLocaleTimeString('en-GB', { hour: '2-digit' }))
+    timeOfDayString =
+      timeOfDay < 12 ? 'morning' : timeOfDay < 17 ? 'midday' : 'evening'
+
+    // if the current time isn't in the open times, add it
+    if (!openTimes().includes(timeOfDayString)) {
+      setOpenTimes((prev) => [...prev, timeOfDayString])
+    }
+  }
+  updateTime()
+
   // Whenever the habits list is updated, refresh the list of habits
   // also, do the same every hour
   createEffect(() => {
@@ -37,6 +55,7 @@ export default function Habits() {
   })
   setInterval(() => {
     updateHabitsList()
+    updateTime()
   }, oneHour)
 
   const refreshHabitsList = async () => {
@@ -63,14 +82,25 @@ export default function Habits() {
   }
 
   const extractTodaysHabits = async () => {
-    console.log("extracting today's habits")
-    setTodaysHabits([])
-
-    // Add habits to the list if they are due today
+    // Add new habits to the list if they are due today
     for (const habit of habits()) {
+      // Check if the habit is due today
       if (!habit.days.includes(todayString.toLowerCase())) continue
-      if (todaysHabits().find((h) => h.id === habit.id)) continue
 
+      // Check if the habit is already in the list
+      if (todaysHabits().find((h) => h.id === habit.id)) {
+        // If it is, check if it has changed
+        const existingHabit = todaysHabits().find((h) => h.id === habit.id)
+        if (existingHabit !== habit) {
+          // If it has, update it
+          setTodaysHabits((prev) =>
+            prev.map((h) => (h.id === habit.id ? habit : h))
+          )
+        }
+        continue
+      }
+
+      // If it isn't, add it
       setTodaysHabits((prev) => [...prev, habit])
     }
 
@@ -111,13 +141,19 @@ export default function Habits() {
             let ulRef: HTMLUListElement | undefined
             const [taskCount, setTaskCount] = createSignal(0)
             const [completedCount, setCompletedCount] = createSignal(0)
-            const [open, setOpen] = createSignal(timeOfDayString === time.value)
+            const [open, setOpen] = createSignal(
+              openTimes().includes(time.value)
+            )
             return (
               <div class="py-6">
                 <h2
                   onclick={() => {
                     ulRef?.classList.toggle('hidden')
-                    setOpen(!open())
+                    setOpenTimes((prev) =>
+                      prev.includes(time.value)
+                        ? prev.filter((t) => t !== time.value)
+                        : [...prev, time.value]
+                    )
                   }}
                   class={
                     'group mb-2 flex w-fit cursor-pointer items-center gap-4 text-3xl font-bold uppercase transition-colors duration-150  hover:text-blue-500' +
