@@ -82,35 +82,41 @@ export const get: APIRoute = async ({ params, request }) => {
         ELSE 0 
     END AS is_completed_today,
     c.value,
-    COALESCE(
-        (
-            SELECT 
-    COUNT(*)
-FROM (
-    SELECT 
-        date,
-        habit_id,
-        completion,
-        date - ROW_NUMBER() OVER (ORDER BY date) AS group_num
-    FROM (
-        SELECT 
-            hd.date,
-            hd.habit_id,
-            CASE WHEN c.id IS NOT NULL THEN 1 ELSE 0 END AS completion
-        FROM habit_dates hd
-        LEFT JOIN completions c ON c.habit_id = hd.habit_id AND c.completion_date = hd.date
-        WHERE hd.habit_id = h.id AND hd.date <= NOW()
-    ) AS ExpectedAndCompleted
-    WHERE completion = 1
-) AS GroupedSequences
-GROUP BY habit_id, group_num
-ORDER BY MAX(date) DESC
-LIMIT 1
-        ), 0
-    ) AS current_streak
+    CASE 
+        WHEN (SELECT MAX(completion_date) FROM completions WHERE habit_id = h.id) IN (CURDATE(), (SELECT MAX(date) FROM habit_dates hd WHERE hd.habit_id = h.id AND hd.date < CURDATE())) THEN
+            COALESCE(
+                (
+                    SELECT 
+                        COUNT(*)
+                    FROM (
+                        SELECT 
+                            date,
+                            habit_id,
+                            completion,
+                            date - ROW_NUMBER() OVER (ORDER BY date) AS group_num
+                        FROM (
+                            SELECT 
+                                hd.date,
+                                hd.habit_id,
+                                CASE WHEN c.id IS NOT NULL THEN 1 ELSE 0 END AS completion
+                            FROM habit_dates hd
+                            LEFT JOIN completions c ON c.habit_id = hd.habit_id AND c.completion_date = hd.date
+                            WHERE hd.habit_id = h.id AND hd.date <= NOW()
+                        ) AS ExpectedAndCompleted
+                        WHERE completion = 1
+                    ) AS GroupedSequences
+                    GROUP BY habit_id, group_num
+                    HAVING DATEDIFF((SELECT MAX(completion_date) FROM completions WHERE habit_id = h.id), MAX(date)) = 0 -- Ensure the streak is up to the most recent completion date
+                    ORDER BY MAX(date) DESC
+                    LIMIT 1
+                ), 0
+            )
+        ELSE 0
+    END AS current_streak
 FROM habits h
 LEFT JOIN completions c ON h.id = c.habit_id AND c.completion_date = CURDATE()
-WHERE h.user = ? AND h.active = 1`,
+WHERE h.user = ? AND h.active = 1;
+`,
       [user_id]
     )
     const habits: HabitType[] = response.rows.map((row: any) => {

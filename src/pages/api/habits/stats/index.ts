@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import GetUserId from '../../_auth'
 import { DB } from '../../_database'
-import type { HabitType, Stat } from '../../../../components/app/_store'
+import type { Stat } from '../../../../components/app/_store'
 
 export const get: APIRoute = async ({ params, request }) => {
   try {
