@@ -7,7 +7,7 @@ export default function Calendar(props: Props) {
   const daysInMonth = new Date(props.year, props.month, 0).getDate()
 
   return (
-    <div class="mb-2 grid w-fit grid-cols-7 gap-1">
+    <div class="grid w-fit grid-cols-7 gap-1">
       {Array.from(Array(daysInMonth).keys()).map((day) => {
         const date = new Date(props.year, props.month - 1, day + 1)
         const formattedDate = date.toISOString().split('T')[0]
@@ -23,7 +23,7 @@ export default function Calendar(props: Props) {
               class={
                 'h-2 w-2 rounded-full' +
                 (completed ? ' bg-lime-600' : ' bg-gray-500') +
-                (today ? ' border-2 border-white' : '')
+                (today ? ' border border-white' : '')
               }
             ></div>
             <div class="pointer-events-none absolute z-20 whitespace-nowrap rounded bg-white px-2 py-1 text-xs text-black opacity-0 group-hover:opacity-100">
