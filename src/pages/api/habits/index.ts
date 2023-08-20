@@ -82,17 +82,31 @@ export const get: APIRoute = async ({ params, request }) => {
         ELSE 0 
     END AS is_completed_today,
     c.value,
-    (
-        SELECT COUNT(*)
-        FROM (
-            SELECT hd.date, 
-                   CASE WHEN c1.completion_date IS NULL THEN 0 ELSE 1 END AS completed
-            FROM habit_dates hd
-            LEFT JOIN completions c1 ON hd.habit_id = c1.habit_id AND hd.date = c1.completion_date
-            WHERE hd.habit_id = h.id
-            ORDER BY hd.date DESC
-        ) AS sub
-        WHERE sub.completed = 1 AND sub.date <= CURDATE()
+    COALESCE(
+        (
+            SELECT 
+    COUNT(*)
+FROM (
+    SELECT 
+        date,
+        habit_id,
+        completion,
+        date - ROW_NUMBER() OVER (ORDER BY date) AS group_num
+    FROM (
+        SELECT 
+            hd.date,
+            hd.habit_id,
+            CASE WHEN c.id IS NOT NULL THEN 1 ELSE 0 END AS completion
+        FROM habit_dates hd
+        LEFT JOIN completions c ON c.habit_id = hd.habit_id AND c.completion_date = hd.date
+        WHERE hd.habit_id = h.id AND hd.date <= NOW()
+    ) AS ExpectedAndCompleted
+    WHERE completion = 1
+) AS GroupedSequences
+GROUP BY habit_id, group_num
+ORDER BY MAX(date) DESC
+LIMIT 1
+        ), 0
     ) AS current_streak
 FROM habits h
 LEFT JOIN completions c ON h.id = c.habit_id AND c.completion_date = CURDATE()
