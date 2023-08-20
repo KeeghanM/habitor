@@ -15,3 +15,15 @@ export const [habits, setHabits] = createSignal<HabitType[]>([])
 export const [lastRefresh, setLastRefresh] = createSignal<Date>(new Date())
 
 export const [openTimes, setOpenTimes] = createSignal<string[]>([])
+
+export const [screen, setScreen] = createSignal<'stats' | 'habits'>('habits')
+
+export type Stat = {
+  id: number
+  completion_date: string
+  value: string
+}
+export const [stats, setStats] = createSignal<{
+  [key: number]: { completion_date: string; value: string }[]
+}>({})
+export const [statsRefresh, setStatsRefresh] = createSignal(false)
